@@ -14,12 +14,12 @@ jobs:
         run: |
           mkdir out
           mv main.pdf out/
-          touch out/index.html
+          touch out/index.md
       - name: Upload PDF file
         uses: actions/upload-pages-artifact@v3
         id: deployment
         with:
-          path: out
+          path: out/
   deploy:
     runs-on: ubuntu-latest
     needs: build
