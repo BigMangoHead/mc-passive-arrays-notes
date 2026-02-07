@@ -24,7 +24,7 @@ This document contains many of my notes about passive systems in Divine Journey 
 
 \medskip
 
-If you are interested in copying the good builds in this document, go to areas labelled ``Example'' in the table of contents. For each example, I will give my personal thoughts on how useful the specific build is at the start.
+If you are interested in copying the good builds in this document, go to areas labelled ``Example'' in the table of contents. For each example, I will give my personal thoughts on how useful the specific build is.
 
 \medskip
 
@@ -38,7 +38,19 @@ Otherwise, I would recommend just reading from the top. This document is ordered
 \tableofcontents
 \pagebreak
 
+\section{Introduction}
+One of the main motivations for the approaches in this document is to try to come up with a better system than the standard storage drawers method. This involves having an interface to pull items, a machine for each recipe, and then a storage drawer that the machien outputs to. The machine runs until it backs up due to the drawer filling, and the storage drawer is storage bused for access to the ME system. 
+
+The largest advantage of this approach is that it is dead simple. There are some things one might hope to improve, however.
+\begin{enumerate}
+    \item Can we share multiple recipes in a single machine so that we don't have to build as many machines?
+    \item Can we share the same recipe across multiple machines so that we can produce items faster?
+\end{enumerate}
+Passive arrays give a way to accomplish both of these goals. The next sections will discuss how we can implement that and the necessary complexities in doing that
+
+
 \section{Single Item Passives}
+The first and most practical approach I'll discuss is a more efficient way to go about \textbf{single item input} passive systems. The idea is quite simple. Say we're trying to make passive plates (iron plates, gold plates, etc) using thermal expansion compactors. We will first set up one or more compactors which output directly to the ME system. Then, for each recipe, we will place an interface, 
 
 
 \end{document}
