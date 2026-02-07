@@ -14,6 +14,7 @@ jobs:
         run: |
           mkdir out
           mv main.pdf out/
+          touch out/index.html
       - name: Upload PDF file
         uses: actions/upload-pages-artifact@v3
         id: deployment
