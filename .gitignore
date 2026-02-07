@@ -1,0 +1,4 @@
+
+# Ignore local output an auxiliary files
+out/
+.aux/
