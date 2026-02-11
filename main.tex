@@ -1,5 +1,6 @@
 \documentclass{notes}
 
+\usepackage[labelformat=empty]{caption}
 \usepackage{hyperref}
 \hypersetup{
     colorlinks,
@@ -8,6 +9,7 @@
     linkcolor=black,
     urlcolor=black
 }
+\usepackage{float}
 
 \graphicspath{{./assets}}
 
@@ -24,33 +26,146 @@ This document contains many of my notes about passive systems in Divine Journey 
 
 \medskip
 
-If you are interested in copying the good builds in this document, go to areas labelled ``Example'' in the table of contents. For each example, I will give my personal thoughts on how useful the specific build is.
+If you are interested in copying the good builds in this document, go to areas labeled ``Example'' in the table of contents. For each example, I will give my personal thoughts on how useful the specific build is. You should also probably read the surrounding content, as some examples will build on previous ones.
 
 \medskip
 
-If you are interested in learning about the approaches that I think are most useful and applicable, you are encouraged to skip sections that start with ($\star$).
+Sections marked with a ($\star$) are less useful and less applicable. If you want to learn about the most immediately useful systems in this document, you are encouraged to skip them.
 
 \medskip
 
 Otherwise, I would recommend just reading from the top. This document is ordered by [INSERT MORE]
+
+\medskip
+
+For some conventions, I will always use black ME smart cables to denote the main network.
+
+\medskip
+
+You are also welcome to post about and copy my designs freely (such as posting a guide about a specific setup). I'd prefer some credit but I don't care all too much.
 
 \pagebreak
 \tableofcontents
 \pagebreak
 
 \section{Introduction}
-One of the main motivations for the approaches in this document is to try to come up with a better system than the standard storage drawers method. This involves having an interface to pull items, a machine for each recipe, and then a storage drawer that the machien outputs to. The machine runs until it backs up due to the drawer filling, and the storage drawer is storage bused for access to the ME system. 
+One of the main motivations for the approaches in this document is to try to come up with a better system than the standard storage drawers method. This involves having an interface to pull items, a machine for each recipe, and then a storage drawer that the machine outputs to. The machine runs until it backs up due to the drawer filling, and the storage drawer is storage bused for access to the ME system. 
 
 The largest advantage of this approach is that it is dead simple. There are some things one might hope to improve, however.
 \begin{enumerate}
     \item Can we share multiple recipes in a single machine so that we don't have to build as many machines?
     \item Can we share the same recipe across multiple machines so that we can produce items faster?
 \end{enumerate}
-Passive arrays give a way to accomplish both of these goals. The next sections will discuss how we can implement that and the necessary complexities in doing that
+Passive arrays give a way to accomplish both of these goals. The next sections will discuss how we can implement that and the necessary complexities involved.
 
 
 \section{Single Item Passives}
-The first and most practical approach I'll discuss is a more efficient way to go about \textbf{single item input} passive systems. The idea is quite simple. Say we're trying to make passive plates (iron plates, gold plates, etc) using thermal expansion compactors. We will first set up one or more compactors which output directly to the ME system. Then, for each recipe, we will place an interface, 
+The first and most practical approach I'll discuss is a more efficient way to go about \textbf{single item input} passive systems. The idea is simple enough that we'll just start with an example.
 
+\pagebreak
+\subsection{Example: Compactor Plates}
+This design accomodates passively producing any number of plate recipes and shares them across all compactors. I consider it to be highly practical and useful.
+
+\begin{center}
+    \includegraphics[width=\textwidth]{single-item-1-0-mod}
+\end{center}
+\begin{figure}[H]
+    \begin{minipage}{.33\textwidth}
+        \centering
+        \includegraphics[width=.95\textwidth]{single-item-1-1-mod}
+        \caption{Config for interfaces on right}
+    \end{minipage}%
+    \begin{minipage}{.33\textwidth}
+        \centering
+        \includegraphics[width=.95\textwidth]{single-item-1-2-mod}
+        \captionof{figure}{Config for level emitters}
+    \end{minipage}
+    \begin{minipage}{.33\textwidth}
+        \centering
+        \includegraphics[width=.95\textwidth]{single-item-1-3-mod}
+        \captionof{figure}{Config for compactors}
+    \end{minipage}
+\end{figure}
+Each interface + servo + emitter slice handles one recipe, and can be repeated indefinitely. Each compactor + interface slice is just another machine, and you can have as few or as many as you want to speed up the system. The AE2 network in this picture is your main network. The item in the interface should always be the ingredient for the recipe, and the amount stored in the interface can be whatever you like. The only thing to keep in mind is that if the stack size is too low, the servo may not be able to pull items at the maximum rate. 
+
+The level emitter determines how much you should store. Make sure you change the mode so that it turns on when items are below the given count. IMPORTANT NOTE: this system inherently overproduces by a bit. The item insertion only turns off once outputs enter the system. The maximum amount overproduced will be the total amount of input items that could be buffered in the machines you have. For instance, in the pictured image, the maximum overproduction for a given recipe is $64\cdot 3$, since each machine has an input buffer of 64 items. This almost always not an issue as if you have the resources to be running a passive recipe, you probably have a lot of the ingredients, but it should be remembered when adding recipes. I will also show some modifications to mitigate this.
+
+Additionally, there are many modifications that can be made to the item transfer method. Normal itemducts will likely be too slow if you have a somewhat fast machine or a long row of itemducts. Other options are expanded upon in the next subsections.
+
+To make it clear, the area in between with the terminal is not necessary in a normal build. Notably, you can move the interfaces to be as close or as far from the machines as you would like (though with itemducts, a long distance may cause issues). You could move them to be above the compactors, for instance.
+
+This design works for any machine that takes in a single item input. For example, you can freely swap the compactors for pulverizers, crushers, smelters, enrichment chambers, metal presses, $\ldots$. The only restriction is that the input for the machine must be \emph{exactly} a single item for each recipe. A compactor making gears (each gear is four of the same item) would \emph{not} work, for example. The issue is that if more than one item is needed in a recipe, the items can get separated and left in machines, eventually clogging and breaking the system. This issue will be returned to in a later section.
+
+\subsection{Removing Interfaces}
+While interfaces make this design cleaner, it is certainly possible to remove them. This also uses a different item transfer method, which has different effects.
+
+\begin{center}
+    \includegraphics[width=\textwidth]{single-item-2-0}
+\end{center}
+
+\begin{figure}[H]
+    \begin{minipage}{.33\textwidth}
+        \centering
+        \includegraphics[width=.95\textwidth]{single-item-2-2}
+        \caption{Config for export buses on right}
+    \end{minipage}%
+    \begin{minipage}{.33\textwidth}
+        \centering
+        \includegraphics[width=.95\textwidth]{single-item-2-1}
+        \captionof{figure}{Config for level emitters}
+    \end{minipage}
+    \begin{minipage}{.33\textwidth}
+        \centering
+        \includegraphics[width=.95\textwidth]{single-item-2-3}
+        \captionof{figure}{Config for pulverizers}
+    \end{minipage}
+\end{figure}
+This design is the same in essence as the previous. Each export bus + P2P tunnel + level emitter slice can be repeated for each recipe, and each pulverizer + P2P slice can be repeated to increase the crafting speed. The item in the export bus is the ingredient, and the item in the level emitter is the output. As shown, the blue network is a separate network entirely unconnected to the main network, other than for power with a quartz fiber. The P2Ps on the right are item input P2Ps and the ones on the left are item output P2Ps. Make sure to convert your P2Ps to item P2Ps by clicking them with a chest before configuring their frequency. In case you are unfamiliar with configuring multiple input P2Ps for the same frequency, the process is as follows:
+
+\begin{enumerate}
+    \item Get a memory card, and shift right click it in air to clear it.
+    \item If you have an existing P2P frequency, shift right click one of the input P2Ps to copy it. Otherwise, shift right click a new P2P which you want to make an input.
+    \item Put the memory card in your offhand. Then, right click on a P2P to change it to an input P2P.
+    \item Put it back in your mainhand. Right click on a P2P to change it to an output P2P
+\end{enumerate}
+
+It is also fine to have the P2Ps be on any other ME network (so you can also have them on your main network if you wish). I have only done it this way as it is simple and doesn't waste channels.
+
+For the item output, all the matters is that the items get back to your main network. It is fine to put an import bus on each machine if you wish to. 
+
+Depending on the throughput of the system, you may also need to add acceleration cards to the export buses and import bus.
+
+As with the previous system, you can replace the machine with any single item input recipe.
+
+\subsection{Item Transfer Modifications}
+We'll return to modifying our initial setup. For this, it is fine to use whatever item transfer method you would like, as long as you are able to redstone control the item extraction from the interface. Some particularly good choices are:
+\begin{enumerate}
+    \item Impulse itemducts with reinforced filters on the machines. By placing reinforced filters on the machines that you are inserting to, you can lower the limit on the number of input items in the machine. If you are particularly worried about overproduction, this would help. 
+    \item EnderIO item conduits. These are both very versatile in case you have a complex system you are dealing with, are extremely fast, and (from my experience) are very lag friendly. 
+\end{enumerate}
+
+
+\subsection{($\star$) On-demand Crafting Support}
+
+\subsection{Other Remarks}
+\subsubsection{Lag}
+
+\section{Extensions of Single Item Passive Systems}
+
+\subsection{($\star$) Example: Compactor Gears}
+TODO
+
+\subsection{($\star$) Example: Seared Furnace}
+TODO
+
+\subsection{Example: Mob Loot Fabricator}
+TODO
+
+\subsection{Example: Essentia Smelteries}
+TODO
+
+\section{Multi-Item Passives}
+
+\subsection{Example: Laser Focus}
 
 \end{document}
