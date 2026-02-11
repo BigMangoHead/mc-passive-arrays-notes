@@ -13,7 +13,7 @@ jobs:
       - name: Move output
         run: |
           mkdir out
-          mv main.pdf out/Passive\ Array\ Notes.pdf
+          mv main.pdf out/
           touch out/index.md
       - name: Upload PDF file
         uses: actions/upload-pages-artifact@v3
