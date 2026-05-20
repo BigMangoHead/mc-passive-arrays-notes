@@ -34,11 +34,15 @@ Sections marked with a ($\star$) are less useful and less applicable. If you wan
 
 \medskip
 
-Otherwise, I would recommend just reading from the top. This document is ordered by [INSERT MORE]
+Otherwise, I would recommend just reading from the top. This document is ordered loosely by complexity, with later sections generally building on approaches or ideas from previous ones.
 
 \medskip
 
 For some conventions, I will always use black ME smart cables to denote the main network.
+
+\medskip
+
+Some of this document is incomplete. If you are curious about any of the incomplete sections, feel free to ask me about them, and I will try to put more details here.
 
 \medskip
 
@@ -49,14 +53,14 @@ You are also welcome to post about and copy my designs freely (such as posting a
 \pagebreak
 
 \section{Introduction}
-One of the main motivations for the approaches in this document is to try to come up with a better system than the standard storage drawers method. This involves having an interface to pull items, a machine for each recipe, and then a storage drawer that the machine outputs to. The machine runs until it backs up due to the drawer filling, and the storage drawer is storage bused for access to the ME system. 
+One of the main motivations for the approaches in this document is to try to come up with a better system than the standard storage drawers method. This standard approach involves having an interface to pull items, a machine for each recipe, and then a storage drawer that the machine outputs to. The machine runs until it backs up due to the drawer filling, and the storage drawer is storage bused for access to the ME system. 
 
 The largest advantage of this approach is that it is dead simple. There are some things one might hope to improve, however.
 \begin{enumerate}
     \item Can we share multiple recipes in a single machine so that we don't have to build as many machines?
     \item Can we share the same recipe across multiple machines so that we can produce items faster?
 \end{enumerate}
-Passive arrays give a way to accomplish both of these goals. The next sections will discuss how we can implement that and the necessary complexities involved.
+Passive arrays give a way to accomplish both of these goals. The next sections will discuss how we can implement that and the necessary complexities involved. 
 
 
 \section{Single Item Passives}
@@ -73,7 +77,7 @@ This design accommodates passively producing any number of plate recipes and sha
     \begin{minipage}{.33\textwidth}
         \centering
         \includegraphics[width=.95\textwidth]{single-item-1-1-mod}
-        \caption{Config for interfaces on right}
+        \caption{Config for right interfaces}
     \end{minipage}%
     \begin{minipage}{.33\textwidth}
         \centering
@@ -86,15 +90,15 @@ This design accommodates passively producing any number of plate recipes and sha
         \captionof{figure}{Config for compactors}
     \end{minipage}
 \end{figure}
-Each interface + servo + emitter slice handles one recipe, and can be repeated indefinitely. Each compactor + interface slice is just another machine, and you can have as few or as many as you want to speed up the system. The AE2 network in this picture is your main network. The item in the interface should always be the ingredient for the recipe, and the amount stored in the interface can be whatever you like. The only thing to keep in mind is that if the stack size is too low, the servo may not be able to pull items at the maximum rate. 
+Each interface + servo + emitter slice handles one recipe, and can be repeated indefinitely. Each compactor + interface slice is just another machine, and you can have as few or as many as you want to speed up the system. The AE2 network in this picture is your main network. The item in the interface should always be the ingredient for the recipe, and the amount stored in the interface can be whatever you like. The only thing to keep in mind is that if the stack size is too low, the servo may not be able to pull items at the maximum rate. You can also purposefully lower it to throttle the input rate.
 
-The level emitter determines how much you should store. Make sure you change the mode so that it turns on when items are below the given count. IMPORTANT NOTE: this system inherently overproduces by a bit. The item insertion only turns off once outputs enter the system. The maximum amount overproduced will be the total amount of input items that could be buffered in the machines you have. For instance, in the pictured image, the maximum overproduction for a given recipe is $64\cdot 3$, since each machine has an input buffer of 64 items. This almost always not an issue as if you have the resources to be running a passive recipe, you probably have a lot of the ingredients, but it should be remembered when adding recipes. I will also show some modifications to mitigate this.
+The level emitter determines how much you should store. Make sure you change the mode so that it turns on when items are below the given count. IMPORTANT NOTE: this system inherently overproduces by a bit. The item insertion only turns off once outputs enter the system. The maximum amount overproduced will be the total amount of input items that could be buffered in the machines you have. For instance, in the pictured image, the maximum overproduction for a given recipe is $64\cdot 3$, since each machine has an input buffer of 64 items. This is almost always not an issue as if you have the resources to be running a passive recipe, you probably have a lot of the ingredients, but it should be remembered when adding recipes. I will later show some modifications to mitigate this.
 
 Additionally, there are many modifications that can be made to the item transfer method. Normal itemducts will likely be too slow if you have a somewhat fast machine or a long row of itemducts. Other options are expanded upon in the next subsections.
 
 To make it clear, the area in between with the terminal is not necessary in a normal build. Notably, you can move the interfaces to be as close or as far from the machines as you would like (though with itemducts, a long distance may cause issues). You could move them to be above the compactors, for instance.
 
-This design works for any machine that takes in a single item input. For example, you can freely swap the compactors for pulverizers, crushers, smelters, enrichment chambers, metal presses, $\ldots$. The only restriction is that the input for the machine must be \emph{exactly} a single item for each recipe. A compactor making gears (each gear is four of the same item) would \emph{not} work, for example. The issue is that if more than one item is needed in a recipe, the items can get separated and left in machines, eventually clogging and breaking the system. This issue will be returned to in a later section.
+This design works for any machine that takes in a single item input. For example, you can freely swap the compactors for pulverizers, crushers, smelters, enrichment chambers, metal presses, etc. The only restriction is that the input for the machine must be \emph{exactly} a single item for each recipe. A compactor making gears (each gear is four of the same item) would \emph{not} work, for example. The issue is that if more than one item is needed in a recipe, the items can get separated and left in machines, eventually clogging and breaking the system. This issue will be returned to in a later section.
 
 \subsection{Removing Interfaces}
 While interfaces make this design cleaner, it is certainly possible to remove them. This also uses a different item transfer method, which has different effects.
@@ -126,7 +130,7 @@ This design is the same in essence as the previous. Each export bus + P2P tunnel
     \item Get a memory card, and shift right click it in air to clear it.
     \item If you have an existing P2P frequency, shift right click one of the input P2Ps to copy it. Otherwise, shift right click a new P2P which you want to make an input.
     \item Put the memory card in your offhand and empty your mainhand. Then, right click on a P2P to change it to an input P2P.
-    \item Put it back in your mainhand. Right click on a P2P to change it to an output P2P
+    \item Put it back in your mainhand. Right click on a P2P to change it to an output P2P.
 \end{enumerate}
 
 It is also fine to have the P2Ps be on any other ME network (so you can also have them on your main network if you wish). I have only done it this way as it is simple and doesn't waste channels. With the shown design, you may need to add an ME controller to the blue network if you add many recipes.
@@ -141,16 +145,48 @@ As with the previous system, you can replace the machine with any single item in
 We'll return to modifying our initial setup. For this, it is fine to use whatever item transfer method you would like, as long as you are able to redstone control the item extraction from the interface. Some particularly good choices are:
 \begin{enumerate}
     \item Impulse itemducts with reinforced filters on the machines. By placing reinforced filters on the machines that you are inserting to, you can lower the limit on the number of input items in the machine. If you are particularly worried about overproduction, this would help. 
-    \item EnderIO item conduits. These are both very versatile in case you have a complex system you are dealing with, are extremely fast, and (from my experience) are very lag friendly. 
+    \item EnderIO item conduits. They can be nice in tight spaces, are easy to copy settings to due to the uber conduit probe, transfer a lot of items, and (from my limited experience) are very lag friendly. 
 \end{enumerate}
 
-
 \subsection{($\star$) On-demand Crafting Support}
+Another modification that can be made is sharing the passive array with on-demand crafts. I personally did not find myself using this a ton, but I could see it being useful and it is interesting. We'll detail an example.
+
+\begin{center}
+    \includegraphics[width=\textwidth]{single-item-OD-1-0}
+\end{center}
+\begin{figure}[H]
+    \begin{minipage}{.5\textwidth}
+        \centering
+        \includegraphics[width=.95\textwidth]{single-item-OD-1-1}
+        \caption{Config for left interface}
+    \end{minipage}%
+    \begin{minipage}{.5\textwidth}
+        \centering
+        \includegraphics[width=.95\textwidth]{single-item-OD-1-2}
+        \captionof{figure}{Config for conduit out of right dropper}
+    \end{minipage}
+\end{figure}
+In this example, we use item conduits, but it would be exactly equivalent to use any of the other previously listed item transfer methods. The main difference is that we have the two upwards-facing droppers in this system, which act as intermediate storages. The only reason we use droppers here is that they store a low total number of items, lowering the amount that we overproduce. It could be better to use hoppers as they store even less, for instance, but it's probably not too important either way.
+
+For other details of the build, notice that the screenshotted conduit settings have active without redstone and round robin set. The item conduit extracting from the last dropper is always extracting and has round robin mode enabled.
+
+To explain a little more, the purpose of the comparator is to stop input from the passive system if there are on-demand recipes being requested. This is to make sure that on-demand recipes are prioritized.
+
+As a practical note, it would likely be good to increase the amount of recipes you do in a single pattern. 64x-256x would probably be a good number. This means that you should change the example pattern in the interface to take 256 gold and output 256 pulverized gold. The reason this is useful is that there can be significant delay in when a recipe is processed, as if the machines have a backlog of items, they will have to get through that before they can process the active recipe. Thus, doing more at a time means that the items will be on hand more often and mean that you don't have to wait for all the passive machines when you just want 2 pulverized gold. This limitation is the main reason I found on-demand crafts in passive arrays to be less useful, but if you rely on a lot of on-demand crafts that spend a long time in machines, this could help.
 
 \subsection{Other Remarks}
 \subsubsection{Lag}
+While I cannot speak much to different versions of these mods, I do at least know that level emitters have severe lag issues due to a bad implementation in the default 1.12.2 Applied Energistics 2 version. If you are playing a pack on this version of AE2, you should switch to the unofficial fork, which implements them much more efficiently (and adds many other improvements).
 
+I have not done any substantial testing of the lag of these systems, but I can give some reasons why they might be lag-efficient. I have also used some of these setups on a large scale in my own playthrough of Divine Journey 2 and they did not show up significantly when doing TPS profiling. 
+
+I'll base my reasoning on some of the code I understand and the setup. My understanding is that level emitters initalize a listener, which means that when an item is added to your ME system, AE2 performs an efficient check to see if a level emitter is looking for that item and call an update on it if so. This means that level emitters should not be a huge lag source. When all level emitters are off, the entire system should cause very little lag, as every component is disabled, all items are stored in an AE2 system, and the machines have no items in their inventory. When on, the main source of lag should just be item transfer and machines running, which is unavoidable with any setup.
+
+In comparison, drawer walls can have some lag issues, as they have to be queried whenever items are pulled from ME systems. Additionally, since you backfill the machines, it is probable that the machines are frequently checking for space in the drawer, adding to the tick time. Depending on how the machine implements this, this may or may not cause much lag. Heuristically, I thus expect drawers to perform significantly worse than passive arays, but again, substantial testing should be done. I will update this section if I do this in the future.
+
+\pagebreak
 \section{Extensions of Single Item Passive Systems}
+This section is currently incomplete. You are welcome to ask me about these setups and I can try to put an overview in here.
 
 \subsection{($\star$) Example: Compactor Gears}
 TODO
@@ -164,8 +200,32 @@ TODO
 \subsection{Example: Essentia Smelteries}
 TODO
 
+\pagebreak
 \section{Multi-Item Passives}
 
+\subsection{Introduction}
+Our goal of this section is to do the same thing we did with single item passive arrays, but to instead support recipes that take multiple items. We first must ask what makes this problem much more complicated. Put simply, it is very difficult to prevent recipes from getting split up. This includes cases such as one recipe getting split across two machines, or cases where items from one recipe and from another recipe get simultaneously input into a machine, blocking the input or running a recipe that uses items combined from two recipes. Another case is if the level emitter controlling the item input turns off, cutting off recipe inputs partway through and blocking machines filled with those items until the recipe is needed again.
+
+To address this, our approach is to store recipes into some sort of portable storage. We will put an entire recipe into this storage, move the storage, and then unload all the items in it into one machine. The storages we attempted to use were:
+\begin{itemize}
+    \item Shulker boxes
+    \item ME storage cells
+    \item Packages (from PackagedAuto)
+\end{itemize}
+Packagers proved to have the simplest implementation, and are thus what we will detail.
+
+In the future, I may add sections here on the shulker boxes and ME cells, but it should be made clear that their systems were significantly more complicated. As you will see, the packager system is somewhat complicated, but its robustness in my opinion makes up for it.
+
 \subsection{Example: Laser Focus}
+
+\subsection{($\star$) Example: Runic Altar}
+
+\subsection{($\star$) Other Portable Storage Methods}
+The main limitation with packagers is really only that they are gated late into the pack and can be expensive. If it were not for that, I think they would be unquestionably the best solution. I'll now detail some of the challenges with shulker boxes and with storage cells.
+
+For shulker boxes, the main limitation is that it is annoying to deal with breaking and placing the box. Unloading thus has to be significantly bigger. Loading also has some complication due to this. Both of these force the setup to be larger, but it is certainly tenable and even useful if you truly need a high throughput passive array. My playthrough used a passive array of this form for alloy smelters, as it made it easier to produce mass quantities of the alloys we wanted, but we switched to packagers later on.
+
+For storage cells, the main limitation is much more subtle. Unloading is easy because of ME IO ports. However, unlike with packages and shulker boxes, you cannot use a limited item filter to immediately load into a ME cell. You thus have to either load the items into some other storage with a limited item filter, then move it to the cell when the recipe is filled, or use an impulse item hopper. Both of these are not extremely simple to implement and make it more annoying to build and configure. I also personally like having a one-wide tileable design for loaders, which is annoying with AE2 because you run into some network merging.
+
 
 \end{document}

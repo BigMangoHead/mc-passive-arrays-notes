@@ -13,7 +13,7 @@
 
 \usetikzlibrary{shadows} % Allow shadows in TikZ frames for mdframed
 
-\LoadClass{article}
+\LoadClass[12pt]{article}
 
 % Override \author, \title, \date commands so we can access them at the correct time.
 % Probably scuffed but it seems to work
@@ -39,7 +39,7 @@ April\or May \or June\or July\or August\or September\or October\or November\or %
 December\fi}
 
 % Some page settings
-\linespread{1.5}
+%\linespread{1.5}
 \hoffset = -35pt % Deafult is 0
 \textwidth = 415pt % Default is 345
 \voffset = -10pt % Default is 0
@@ -54,3 +54,4 @@ December\fi}
 \renewcommand{\headrulewidth}{0.5pt}
 \fancyhead[R]{\theauthor, \thedate}
 \fancyhead[L]{\thetitle}
+\setlength{\headheight}{15pt}
